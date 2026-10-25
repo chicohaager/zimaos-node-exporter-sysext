@@ -24,7 +24,10 @@ scrape_configs:
       - targets: ['<host>:9633']
 ```
 
-For Grafana, dashboard 1860 (*Node Exporter Full*) shows the host metrics.
+For Grafana, dashboard 1860 (*Node Exporter Full*) shows the host metrics and dashboard 22604
+(*SMARTctl Exporter Dashboard*) the disks (tested 2026-10-25 with Prometheus 3.15.1 and Grafana 13.2.4
+against a ZimaBoard 2: 3 disks, temperatures, power-on time, data written). *Root FS* stays N/A: the
+ZimaOS root is a read-only squashfs, which node_exporter leaves out by default; your data is on `/DATA`.
 
 The exporters answer anyone who reaches the ports, without a login, as upstream does. ZFW limits that to the LAN; without ZFW every device that reaches the host can read the metrics.
 
