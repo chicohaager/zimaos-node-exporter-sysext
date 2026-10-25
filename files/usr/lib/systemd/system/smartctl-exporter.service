@@ -1,0 +1,14 @@
+# Prometheus smartctl_exporter on :9633: SMART values of every disk, read with the host's own
+# /usr/sbin/smartctl (ZimaOS 1.8.0 ships smartctl 7.5). Needs root to open the disks.
+[Unit]
+Description=Prometheus smartctl_exporter (:9633)
+Documentation=https://github.com/prometheus-community/smartctl_exporter
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/smartctl_exporter --web.listen-address=:9633 --smartctl.path=/usr/sbin/smartctl
+Restart=always
+RestartSec=5

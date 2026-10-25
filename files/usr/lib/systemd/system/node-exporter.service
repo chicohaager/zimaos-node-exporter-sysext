@@ -1,0 +1,14 @@
+# Prometheus node_exporter on :9100 (CPU, memory, disks, file systems, network of this host).
+# No [Install]: a sysext unit is not started at boot; `node-exporter-zima enable` adds the watchdog timer.
+[Unit]
+Description=Prometheus node_exporter (:9100)
+Documentation=https://github.com/prometheus/node_exporter
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node_exporter --web.listen-address=:9100
+Restart=always
+RestartSec=5
