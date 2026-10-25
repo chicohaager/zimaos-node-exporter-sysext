@@ -1,0 +1,18 @@
+{
+  "name": "node-exporter",
+  "version": "v@VERSION@",
+  "ui": {
+    "name": "node-exporter",
+    "title": { "en_us": "Prometheus Exporter", "de_de": "Prometheus Exporter" },
+    "prefetch": true,
+    "show": true,
+    "entry": "/modules/node-exporter/index.html",
+    "icon": "/modules/node-exporter/appicon.svg",
+    "description": "Prometheus node_exporter and smartctl_exporter: host and disk metrics for Prometheus or Grafana",
+    "formality": {
+      "type": "newtab",
+      "props": { "width": "100vh", "height": "100vh", "hasModalCard": true, "animation": "zoom-in" }
+    }
+  },
+  "services": [ { "name": "node-exporter-web" } ]
+}

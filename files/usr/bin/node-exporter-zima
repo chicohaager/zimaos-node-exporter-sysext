@@ -1,0 +1,16 @@
+#!/bin/sh
+# Start the Prometheus exporters now and at every boot.
+#   node-exporter-zima enable     start node-exporter (:9100) and smartctl-exporter (:9633), add their boot watchdogs
+#   node-exporter-zima disable    stop both and remove the watchdogs
+#   node-exporter-zima status     state and watchdog of both
+set -eu
+WD=/usr/libexec/node-exporter/unit-watchdog.sh
+UNITS="node-exporter.service smartctl-exporter.service"
+case "${1:-}" in
+enable|disable)
+  [ "$(id -u)" -eq 0 ] || { echo "needs root: sudo node-exporter-zima $1" >&2; exit 1; }
+  for u in $UNITS; do sh "$WD" "$1" "$u"; done
+  ;;
+status) for u in $UNITS; do sh "$WD" status "$u"; done ;;
+*) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2 ;;
+esac
