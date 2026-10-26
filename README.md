@@ -58,6 +58,8 @@ curl -s http://127.0.0.1:9100/metrics | head
 ```sh
 sh build.sh amd64              # downloads both releases and checks their pinned sha256; needs Go, node, ../lintux-modkit
 sudo sh tools/host-test.sh     # on the host after installing; `cleanup` turns the exporters off again
+tools/check-reproducible.sh    # before a release: builds three times (umask 022, 002 and 077) and fails when the bytes differ
+../lintux-modkit/tools/check-release.sh . v<version> node-exporter   # after the release: rebuilds the tag, same bytes as the asset
 ```
 
 ## License
