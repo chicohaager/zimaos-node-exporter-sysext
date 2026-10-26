@@ -53,6 +53,9 @@ func main() {
 	webmod.Run(webmod.Options{
 		Name: "node-exporter", Service: "node-exporter-web", Binary: "/usr/bin/node-exporter-web",
 		Route: "/node-exporter", Version: version, API: api,
+		// The exporters keep the old binaries when zpkg replaces the module (it restarts
+		// only node-exporter-web): webmod restarts them then (lintux-modkit stale).
+		Restart: []string{exporters[0].Unit, exporters[1].Unit},
 	})
 }
 
