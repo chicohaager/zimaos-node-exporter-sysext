@@ -62,4 +62,4 @@ sudo sh tools/host-test.sh     # on the host after installing; `cleanup` turns t
 
 ## License
 
-MIT for this repository. node_exporter and smartctl_exporter are Apache-2.0 (`/usr/share/doc/node-exporter/`).
+MIT for this repository. The tile icon is the Prometheus logo (`documentation/images/prometheus-logo.svg` of [prometheus/prometheus](https://github.com/prometheus/prometheus), commit a83f715, Apache-2.0) on the tile background. node_exporter and smartctl_exporter are Apache-2.0 (`/usr/share/doc/node-exporter/`).
