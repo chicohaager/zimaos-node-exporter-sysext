@@ -1,15 +1,25 @@
 #!/bin/sh
 # Run on a ZimaOS host as root after `zpkg install node-exporter.raw`.
 #   sudo sh host-test.sh           turn both exporters on, check what they deliver, leave them running (reboot test)
-#   sudo sh host-test.sh cleanup   turn them off again
+#   sudo sh host-test.sh cleanup   turn them off again — unless they ran before the test
 set -u
-ok=0; bad=0
-pass() { ok=$((ok + 1)); echo "OK   $1"; }
-fail() { bad=$((bad + 1)); echo "FAIL $1"; }
+# pass/fail and the cleanup after a failure or abort: lintux-modkit tools/hosttest-lib.sh, copied next to this file
+. "$(dirname "$0")/hosttest-lib.sh"
+HT_LIST=/etc/lintux-hosttest/node-exporter.list
 
+# Only what this run turned on is turned off: exporters that ran before stay on (after a failure,
+# an abort and with `cleanup`). The state before the run is kept in $WAS.
+# (27.10.2026: `cleanup` turned off exporters that had run since the boot.)
+WAS=/etc/lintux-hosttest/node-exporter.was
+exporter_cleanup() {
+  if [ "$(cat "$WAS" 2>/dev/null)" = active ]; then echo "exporters ran before the test: left on"
+  else node-exporter-zima disable; fi
+  rm -f "$WAS"
+  echo "cleanup done: exporters $(systemctl is-active node-exporter.service), $(ls /etc/systemd/system/*exporter-watchdog.* 2>/dev/null | wc -l) watchdog units"
+}
 if [ "${1:-}" = cleanup ]; then
-  node-exporter-zima disable
-  echo "cleanup done: $(ls /etc/systemd/system/*exporter-watchdog.* 2>/dev/null | wc -l) watchdog units left"
+  exporter_cleanup
+  rm -f "$HT_LIST"
   exit 0
 fi
 
@@ -17,6 +27,8 @@ v=$(node_exporter --version 2>&1 | head -n 1); case "$v" in *"version 1.12.1"*) 
 v=$(smartctl_exporter --version 2>&1 | head -n 1); case "$v" in *"version 0.15.0"*) pass "smartctl_exporter: $v" ;; *) fail "smartctl_exporter version: $v" ;; esac
 a=$(systemctl is-active node-exporter-web.service); [ "$a" = active ] && pass "node-exporter-web active" || fail "node-exporter-web: $a"
 
+mkdir -p "$(dirname "$WAS")"; [ -e "$WAS" ] || systemctl is-active node-exporter.service > "$WAS"
+ht_init "$HT_LIST"; ht_made call exporter_cleanup   # from here on a failure or abort runs exporter_cleanup
 node-exporter-zima enable >/dev/null 2>&1 || fail "node-exporter-zima enable"
 for i in 1 2 3 4 5 6 7 8 9 10; do
   curl -fs -m 3 -o /dev/null http://127.0.0.1:9100/metrics && curl -fs -m 20 -o /dev/null http://127.0.0.1:9633/metrics && break
@@ -36,4 +48,4 @@ done
 h=$(curl -fs -m 5 http://127.0.0.1/node-exporter/health); case "$h" in *'"version":"1.0.0"'*) pass "tile health $h" ;; *) fail "tile health: $h" ;; esac
 
 echo "node-exporter host-test: $ok OK, $bad FAIL"
-[ "$bad" -eq 0 ]
+ht_done
