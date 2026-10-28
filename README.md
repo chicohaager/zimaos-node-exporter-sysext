@@ -1,6 +1,6 @@
 # Prometheus Exporter for ZimaOS
 
-**Version 1.0.0** · ZimaOS 1.8.0 (amd64) · sysext module `node-exporter`
+**Version 1.0.1** · ZimaOS 1.8.0 (amd64) · sysext module `node-exporter`
 
 Host and disk metrics of a ZimaOS host for [Prometheus](https://prometheus.io) or Grafana, as a native ZimaOS module — no container:
 
