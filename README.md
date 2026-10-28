@@ -63,6 +63,8 @@ tools/check-reproducible.sh    # before a release: builds three times (umask 022
 ../lintux-modkit/tools/check-release.sh . v<version> node-exporter   # after the release: rebuilds the tag, same bytes as the asset
 ```
 
+`build.sh` builds only against the lintux-modkit commit in `lintux-modkit.ref`, without local changes — both for the scripts (`../lintux-modkit` or `LINTUX_MODKIT=`) and for the directory Go compiles (go.mod's `replace` or a `go.work`; `LINTUX_MODKIT` does not move it): `scripts/modkit-check.sh` asks `go list` which one that is. `MODKIT_DEV=1` builds anyway, with a warning, not for a release. `bash tools/test-modkit-check.sh` tests the check.
+
 ## License
 
 MIT for this repository. The tile icon is the Prometheus logo (`documentation/images/prometheus-logo.svg` of [prometheus/prometheus](https://github.com/prometheus/prometheus), commit a83f715, Apache-2.0) on the tile background. node_exporter and smartctl_exporter are Apache-2.0 (`/usr/share/doc/node-exporter/`).
