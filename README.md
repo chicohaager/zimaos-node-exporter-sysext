@@ -1,6 +1,6 @@
 # Prometheus Exporter for ZimaOS
 
-**Version 1.0.0** · ZimaOS 1.8.0 (amd64) · sysext module `node-exporter`
+**Version 1.0.1** · ZimaOS 1.8.0 (amd64) · sysext module `node-exporter`
 
 Host and disk metrics of a ZimaOS host for [Prometheus](https://prometheus.io) or Grafana, as a native ZimaOS module — no container:
 
@@ -57,10 +57,13 @@ curl -s http://127.0.0.1:9100/metrics | head
 
 ```sh
 sh build.sh amd64              # downloads both releases and checks their pinned sha256; needs Go, node, ../lintux-modkit
-sudo sh tools/host-test.sh     # on the host after installing; `cleanup` turns the exporters off again
+sudo sh tools/host-test.sh     # on the host after installing, with lintux-modkit tools/hosttest-lib.sh next to it;
+                               # `cleanup` (and a failure or abort) turns off only exporters the test turned on
 tools/check-reproducible.sh    # before a release: builds three times (umask 022, 002 and 077) and fails when the bytes differ
 ../lintux-modkit/tools/check-release.sh . v<version> node-exporter   # after the release: rebuilds the tag, same bytes as the asset
 ```
+
+`build.sh` builds only against the lintux-modkit commit in `lintux-modkit.ref`, without local changes — both for the scripts (`../lintux-modkit` or `LINTUX_MODKIT=`) and for the directory Go compiles (go.mod's `replace` or a `go.work`; `LINTUX_MODKIT` does not move it): `scripts/modkit-check.sh` asks `go list` which one that is. `MODKIT_DEV=1` builds anyway, with a warning, not for a release. `bash tools/test-modkit-check.sh` tests the check.
 
 ## License
 
